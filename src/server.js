@@ -1,22 +1,14 @@
 import express from "express";
-import ProductManager from "./classes/app.js";
+import routerProducts from "./routes/products.router.js";
+import routerCarts from "./routes/carts.router.js";
 
 const app = express();
+app.use(express.json());
 
-const manager = new ProductManager();
+app.use("/api/products", routerProducts);
+app.use("/api/carts", routerCarts);
 
-app.get('/productos', async (req, res) =>{
-    const productos = await manager.getProducts();
-    if(req.query.limit){
-        res.send(productos.splice(0, req.query.limit))
-    }else{
-        res.send(productos);
-    }
-})
 
-app.get('/productos/:id', async (req, res) =>{
-    const producto = await manager.getProductById(req.params.id)
-    res.send(producto)
-})
-
-app.listen(3000, () =>{console.log("Servidor levantado");})
+app.listen(8080, () => {
+  console.log("Servidor levantado");
+});
