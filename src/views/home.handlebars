@@ -1,0 +1,14 @@
+<div class="container">
+        <h1 style="width: 100%">Productos:</h1>
+        {{#each products}}
+            <div class="tarjetas">
+                <p>{{title}}</p>
+                <p>{{description}}</p>
+                <p>{{code}}</p>
+                <p>${{price}}</p>
+                <p>{{stock}}</p>
+                <p>{{category}}</p>
+                <p>{{thumbnail}}</p>
+            </div>
+        {{/each}}
+</div>
