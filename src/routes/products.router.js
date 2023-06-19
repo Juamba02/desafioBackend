@@ -1,7 +1,8 @@
 import { Router } from "express";
-import {pM} from '../server.js'
+import ProductManager from "../daos/mongodb/ProductManager.js";
 
 const router = Router();
+const pM = new ProductManager()
 
 router.get("/", async (req, res) => {
   const products = await pM.getProducts();
@@ -13,7 +14,7 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:pid", async (req, res) => {
-  const id = parseInt(req.params.pid);
+  const id = req.params.pid;
   const product = await pM.getProductById(id);
   if (product == undefined) {
     res.send({ status: "Error, invalid ID!" });
@@ -24,19 +25,21 @@ router.get("/:pid", async (req, res) => {
 
 router.post("/", async (req, res) => {
   const product = req.body;
-  const message = await pM.addProduct(product.title, product.description, product.category, product.price, product.thumbnail, product.code, product.stock);
+  const message = await pM.addProduct(product);
+  const products = await pM.getProducts();
+  req.socketServer.sockets.emit('products', products);
   res.send({status: message});
 });
 
 router.put("/:pid", async (req, res) => {
-  const id = parseInt(req.params.pid);
+  const id = req.params.pid;
   const updatedProperties = req.body;
   const message = await pM.updateProduct(id, updatedProperties);
   res.send({status: message});
 });
 
 router.delete("/:pid", async (req, res) => {
-  const id = parseInt(req.params.pid);
+  const id = req.params.pid;
   const message = await pM.deleteProduct(id)
   res.send({status: message});
 });

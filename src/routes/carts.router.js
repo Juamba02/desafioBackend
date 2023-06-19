@@ -9,8 +9,13 @@ router.post("/", async (req, res) => {
   res.send({ status:"success", payload: message });
 });
 
+router.get("/", async (req, res) => {
+  const carts = await cM.getCarts();
+  res.send({ status: "success", payload: carts })
+})
+
 router.get("/:cid", async (req, res) => {
-  const id = parseInt(req.params.cid);
+  const id = req.params.cid;
   const products = await cM.getCartProducts(id);
   if (!products){
     res.send({ status: "Error, invalid ID" });
@@ -20,8 +25,8 @@ router.get("/:cid", async (req, res) => {
 });
 
 router.post("/:cid/product/:pid", async (req, res) => {
-  const cartId = parseInt(req.params.cid);
-  const productId = parseInt(req.params.pid);
+  const cartId = req.params.cid;
+  const productId = req.params.pid;
   const message = await cM.addProduct(cartId, productId);
   res.send({status: message});
 });
