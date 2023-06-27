@@ -21,18 +21,35 @@ class ProductManager {
   };
 
   getProductById = async (id) => {
-    let result = await productsModel.findOne( {_id: id} )
-    return result;
+    try{
+      let result = await productsModel.findOne( {_id: id} )
+      return result;
+    }catch{
+      let result = "ID invalido!"
+      return result;
+    }
+    
+    
   };
 
   updateProduct = async (id, updatedProperties) =>{
-    let result = await productsModel.updateOne({_id: id}, {$set: updatedProperties});
-    return result;
+    try{
+      let result = await productsModel.updateOne({_id: id}, {$set: updatedProperties});
+      return await this.getProductById(id);
+    }catch{
+      return "ID invalido!"
+    }
+    
   }
 
   deleteProduct = async (id) => {
-    let result = await productsModel.deleteOne({_id: id});
-    return result;
+    try{
+      let result = await productsModel.deleteOne({_id: id});
+      return result;
+    }catch{
+      return "ID invalido!"
+    }
+    
   }
 }
 
