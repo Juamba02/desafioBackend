@@ -12,7 +12,7 @@ class CartManager {
   }
 
   getCartById = async (id) => {
-    const result = await cartModel.findOne({_id: id});
+    const result = await cartModel.findOne({_id: id}).populate("products.product");
     return result;
   }
   
@@ -24,13 +24,14 @@ class CartManager {
 
   getCartProducts = async (id) => {
      const cart = await this.getCartById(id);
-     const products = await cart.products;
+     const products = cart.products;
      return products;
   }
 
   addProduct = async (cartId, productId) => {
     const product = await pM.getProductById(productId);
     const cart = await this.getCartById(cartId);
+    console.log(productId, cartId);
     const index = cart.products.findIndex((item) => {
       console.log(item.product);
       return item.product.toString() === product._id.toString();
@@ -42,7 +43,56 @@ class CartManager {
       cart.products[index].quantity++;
     }
     await cart.save();
+    console.log("agregado al carrito!");
     return;
+  }
+
+  deleteProductFromCart = async (cartId, productId) => {
+    try{
+      const cart = await this.getCartById(cartId);
+      cart.products.pull(productId);
+      await cart.save();
+      return "Producto eliminado!";
+    }catch{
+      return "Algun ID invalido!";
+    }
+  }
+
+  deleteAllProductsFromCart = async (cartId) => {
+    try{
+      const cart = await this.getCartById(cartId);
+      cart.products = [];
+      await cart.save();
+      return "Productos eliminados!";
+    }catch{
+      return "Algun ID invalido!";
+    }
+  }
+
+  updateQuantity = async (cartId, productId, quantity) => {
+    try {
+      const cart = await this.getCartById(cartId);
+      const cantidad = quantity.quantity
+      let funciono = false
+
+      cart.products.forEach(product => {
+        if(product.id == productId){
+          product.quantity = cantidad
+          cart.save()
+          funciono = true
+        }else{
+          funciono = false
+        }
+      });
+
+      if(funciono) {
+        return "Cantidad actualizada!"
+      }else{
+        return "Producto no encontrado en el carrito"
+      }
+    } catch {
+      return "ID invalido!"
+    }
   }
 }
 

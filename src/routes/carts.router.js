@@ -31,4 +31,25 @@ router.post("/:cid/product/:pid", async (req, res) => {
   res.send({status: message});
 });
 
+router.delete("/:cid/product/:pid", async (req, res) => {
+  const cartId = req.params.cid;
+  const productId = req.params.pid;
+  const message = await cM.deleteProductFromCart(cartId, productId);
+  res.send({status: message});
+});
+
+router.delete("/:cid", async (req, res) => {
+  const cartId = req.params.cid;
+  const message = await cM.deleteAllProductsFromCart(cartId);
+  res.send({status: message});
+});
+
+router.put("/:cid/products/:pid", async (req, res) => {
+  const cartId = req.params.cid;
+  const productId = req.params.pid;
+  const quantity = req.body;
+  const message = await cM.updateQuantity(cartId, productId, quantity);
+  res.send({ payload: message })
+})
+
 export default router;
