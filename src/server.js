@@ -16,6 +16,8 @@ import FileStore from "session-file-store";
 import MongoStore from "connect-mongo";
 import { initializePassport } from "./config/passport.config.js";
 import passport from "passport";
+import { initializePassportJWT } from "./config/jwt.passport.js";
+import { initializePassportLocal } from "./config/local.passport.js";
 
 const app = express();
 app.use(express.json());
@@ -33,7 +35,9 @@ const connection = mongoose.connect(
 )
 
 app.use(cookieParser());
-initializePassport()
+initializePassport();
+initializePassportJWT();
+initializePassportLocal();
 app.use(session({
   store: new MongoStore({
     mongoUrl: "mongodb+srv://Juamba02:Juamba02@cluster0.qfqgbxb.mongodb.net/?retryWrites=true&w=majority",

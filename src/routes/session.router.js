@@ -2,23 +2,38 @@ import { Router } from "express";
 import userModel from "../daos/mongodb/models/users.model.js";
 import { createHash, validatePassword } from "../utils.js";
 import passport from "passport";
+import jwt from "jsonwebtoken"
 
 const router = Router();
 
-router.post("/register", passport.authenticate('register', {failureRedirect:'/register'}), async (req, res) => {
-  res.send({status:"success", message:"User registered"})
-});
-
-router.post("/login", passport.authenticate('login', {failureRedirect:'/login'}), async (req, res) => {
-  if(!req.user) return res.status(400).send({status:'error', error:'invalid credentials'})
-  req.session.user = {
-    first_name: req.user.first_name,
-    last_name: req.user.last_name,
-    email: req.user.email,
-    age: req.user.age,
+router.post(
+  "/register",
+  passport.authenticate("register", { session: false }),
+  async (req, res) => {
+    res.send({ status: "success", message: "usuario  registrado" });
   }
-  res.send({status:'success', payload: req.user})
-});
+);
+
+router.post(
+  "/login",
+  passport.authenticate("login", { session: false }),
+  async (req, res) => {
+    let token = jwt.sign({ email: req.body.email }, "coderSecret", {
+      expiresIn: "24h",
+    });
+    res
+      .cookie("coderCookie", token, { httpOnly: true })
+      .send({ status: "success" });
+  }
+);
+
+router.get(
+  "/current",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    res.send(req.user);
+  }
+);
 
 router.get(
   "/github",
@@ -26,10 +41,14 @@ router.get(
   (req, res) => {}
 );
 
-router.get('/githubcallback',passport.authenticate('github', {failureRedirect: '/login'}),async (req, res)=>{
-  console.log('exito')
-  req.session.user = req.user
-  res.redirect('/')
-} )
+router.get(
+  "/githubcallback",
+  passport.authenticate("github", { failureRedirect: "/login" }),
+  async (req, res) => {
+    console.log("exito");
+    req.session.user = req.user;
+    res.redirect("/");
+  }
+);
 
 export default router;

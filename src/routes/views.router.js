@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { socketServer, pM, cM } from "../server.js";
+import passport from "passport";
 
 const router = Router();
 
@@ -147,14 +148,14 @@ router.get('/login', (req, res) => {
 
 })
 
-// router.get('/', (req, res) => {
+router.get('/', passport.authenticate('jwt', {session: false}), (req, res) => {
 
-//   res.render('products', {
+  res.render('profile', {
 
-//       user: req.session.user
+      user: req.user
 
-//   });
-// })
+  });
+})
 
 
 export default router;
