@@ -18,10 +18,19 @@ router.get("/", async (req, res) => {
       };
     }),
   };
-  res.render("home", {
+  const user = req.session.user
+  let message = '';
+  if(user.email == "adminCoder@coder.com") {
+    message = "Usted tiene el rol de administrador"
+  }else{
+    message = "Usted tiene el rol de usuario";
+  }
+  res.render("products", {
     style: "styles.css",
     title: "Productos",
     products: context.productos,
+    user: user,
+    message: message
   });
 });
 
@@ -123,5 +132,29 @@ router.get("/carts/:cid", async (req, res) => {
     products: context.productos,
   });
 });
+
+router.get('/register', (req, res) => {
+
+  res.render('register');
+
+})
+
+
+
+router.get('/login', (req, res) => {
+
+  res.render('login');
+
+})
+
+// router.get('/', (req, res) => {
+
+//   res.render('products', {
+
+//       user: req.session.user
+
+//   });
+// })
+
 
 export default router;

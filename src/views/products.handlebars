@@ -1,5 +1,9 @@
 <div class="container">
-  <h1 style="width: 100%">Pagina {{page}}</h1>
+  <h1>Bienvenido {{user.name}}</h1>
+  <p>Email: {{user.email}}</p>
+  <p>Edad: {{user.age}}</p>
+  <p>{{message}}</p>
+  <h2 style="width: 100%">Productos</h2>
   {{#each products}}
     
       <div class="tarjetas">
